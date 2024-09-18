@@ -1,20 +1,29 @@
 from data_controller import DataController
+import random
+
+from random_helper import RandomHelper
 
 
 def main():
     data_controller = DataController()
     data_controller.clear_data()
-    # Insert authors
-    data_controller.insert_author("Giorgi", "Gogeishvili", "1989-01-01", "Samtredia")
-    data_controller.insert_author("John", "Doe", "1975-03-15", "New York")
 
-    # Insert a book (random author ID is selected)
-    data_controller.insert_book("The Mysterious Journey", "Fantasy", 350, "2022-07-20")
-    data_controller.insert_book("The Silent Moon", "Thriller", 280, "2021-11-15")
+    author_ids = []
+    for _ in range(500):
+        author = RandomHelper.get_random_author()
+        data_controller.insert_author(author)
 
-    # Close the connection
+        author_id = data_controller.get_random_author_id()
+        if author_id:
+            author_ids.append(author_id)
+
+    for _ in range(1000):
+        author_id = random.choice(author_ids)
+        book = RandomHelper.get_random_book(author_id)
+        data_controller.insert_book(book)
+
     data_controller.close()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
