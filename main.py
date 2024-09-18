@@ -1,13 +1,11 @@
 from data_controller import DataAnalyzer, DataWriter
 import random
-
 from random_helper import RandomHelper
 
 
 def main():
     data_writer = DataWriter()
     data_writer.clear_data()
-
 
     author_ids = []
     for _ in range(500):

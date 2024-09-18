@@ -1,6 +1,7 @@
 import sqlite3
 import random
 
+
 class DataController:
     def __init__(self):
         self.__conn = sqlite3.connect('author_books.sqlite3')  # Changed to _conn
@@ -35,8 +36,6 @@ class DataController:
     def close(self):
         self.__conn.close()
 
-
-
     def get_random_author_id(self):
         try:
             self.cursor.execute('SELECT id FROM author')
@@ -61,7 +60,6 @@ class DataWriter(DataController):
                VALUES (?, ?, ?, ?)
                ''', (first_name, last_name, birth_date, birth_place))
         self.conn.commit()
-
 
     def insert_book(self, book):
         name, category_name, number_of_pages, date_of_issue, author_id = book.get_book_data()
@@ -90,8 +88,11 @@ class DataAnalyzer(DataController):
             ''')
             book = self.cursor.fetchone()
             if book:
+                column_names = [description[0] for description in self.cursor.description]
                 print("Book with the most pages:")
-                print(book)
+                for col_name, value in zip(column_names, book):
+                    print(f"{col_name}: {value}")
+                print("************************************************")
             else:
                 print("No books found.")
         except sqlite3.Error as e:
@@ -104,20 +105,22 @@ class DataAnalyzer(DataController):
             ''')
             avg_pages = self.cursor.fetchone()[0]
             print(f"Average number of pages: {avg_pages:.2f}")
+            print("************************************************")
         except sqlite3.Error as e:
             print(f"Error calculating average number of pages: {e}")
 
     def print_youngest_author(self):
         try:
             self.cursor.execute('''
-                SELECT * FROM author
+                SELECT first_name, last_name FROM author
                 ORDER BY birth_date DESC
                 LIMIT 1
             ''')
             author = self.cursor.fetchone()
             if author:
-                print("Youngest author:")
-                print(author)
+                first_name, last_name = author
+                print(f"Youngest author :{first_name} {last_name}")
+                print("************************************************")
             else:
                 print("No authors found.")
         except sqlite3.Error as e:
@@ -135,7 +138,9 @@ class DataAnalyzer(DataController):
             if authors:
                 print("Authors without books:")
                 for author in authors:
-                    print(author)
+                    author_id, first_name, last_name = author
+                    print(f"ID: {author_id}, Author: {first_name} {last_name}")
+                print("************************************************")
             else:
                 print("All authors have books.")
         except sqlite3.Error as e:
@@ -156,9 +161,10 @@ class DataAnalyzer(DataController):
             if authors:
                 print("Authors with more than 3 books (limited to 5):")
                 for author in authors:
-                    print(author)
+                    author_id, first_name, last_name, book_count = author
+                    print(f"Author: {first_name} {last_name}, Number of Books: {book_count}")
+                print("************************************************")
             else:
                 print("No authors with more than 3 books found.")
         except sqlite3.Error as e:
             print(f"Error fetching authors with more than 3 books: {e}")
-

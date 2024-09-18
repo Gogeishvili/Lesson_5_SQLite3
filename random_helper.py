@@ -20,6 +20,3 @@ class RandomHelper:
         number_of_pages = fake.random_int(min=50, max=1000)
         date_of_issue = fake.date_this_century()
         return Book(name, category_name, number_of_pages, date_of_issue, author_id)
-
-
-
